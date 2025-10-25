@@ -1,2 +1,4 @@
 # TicTacToe
-First little C project
+First little C project, probably not the most elegant solution, but I'm still proud to have completed this project within 2 weeks of learning C! 
+
+-gcc -o TicTacToe tictactoe.c 
