@@ -1,61 +1,89 @@
 #include <stdio.h>
-#include <string.h>
 #define SIZE 3
 
-int checkGameOver();    //NOCH ZU IMPLEMENTIEREN
-void update();
-void draw(char (*m)[SIZE]);
-void makeMove(char (*m)[SIZE], int *zugCounter);
+void printMatrix(char m[SIZE][SIZE]);
+int makeMove(char m[SIZE][SIZE], int zugCounter);
 
 int main(){
 
-    int zugCounter = 0;
-    int gameOver = 0;
+    int zugCounter = 1;
+    int run = 0;
 
-    char matrix[SIZE][SIZE];
+    char m[SIZE][SIZE];
 
-    //FILL MATRIX
+    //WIRD GEFÜLLT
     for(int i=0; i<SIZE; i++){
         for(int j=0; j<SIZE; j++){
-            matrix[i][j] = '-';
+            m[i][j] = '-';
         }
     }
 
-    while(gameOver == 0){
-    draw(matrix);
-    makeMove(matrix, &zugCounter);
+    while(run == 0){
+        zugCounter = makeMove(m, zugCounter);
+        printMatrix(m);
+        run = checkGameState(m);
     }
-
 
     return 0;
 }
 
-void draw(char (*m)[SIZE]) {
-    for(int i = 0; i < SIZE; i++) {
-        for(int j = 0; j < SIZE; j++) {
-            printf("%c ", *(*(m + i) + j));
+int makeMove(char m[SIZE][SIZE], int zugCounter){
+    int x;
+    int y;
+    printf("Spieler %d - Zeilen/Spaltenindex eingeben: ", zugCounter);
+    scanf("%d %d", &x, &y);
+    if(x<0 || x>2 || y<0 || y>2){
+        printf("Ungültige Eingabe. Versuche es erneut!\n");
+        makeMove(m, zugCounter);
+    }
+    printf("\n");
+    if(zugCounter == 1){
+        m[x][y] = 'X';
+        zugCounter++;
+        return zugCounter;
+    }
+    else{
+        m[x][y] = 'O';
+        zugCounter = 1;
+        return zugCounter;
+    }
+}
+
+int checkGameState(char m[SIZE][SIZE]){
+
+    int run = 0;
+
+    for(int i=0; i<SIZE; i++){
+        if (m[i][0] != '-' && m[i][0] == m[i][1] && m[i][1] == m[i][2]) {
+            run = 1;  //Zeilensieg gefunden
+        }
+        if(m[0][i] != '-' && m[0][i] == m[1][i] && m[1][i] == m[2][i]){
+            run = 1;  //Spaltensieg gefunden
+        }
+        if(m[i][i] != '-' && m[0][0] == m[1][1] && m[0][0] == m[2][2]){
+            run = 1;
+        }
+        if(m[i][SIZE-1-i] != '-' && m[0][2] == m[1][1] && m[0][2] == m[2][0]){
+            run = 1;
+        }
+    }
+
+    if(run == 1){
+        printf("Spiel vorbei!\n");
+    }
+
+    return run;
+}
+
+void printMatrix(char m[SIZE][SIZE]){
+
+    for(int i=0; i<SIZE; i++){
+        for(int j=0; j<SIZE; j++){
+            //printf("%c ", m[i][j]);
+            printf("%c ", *(m[i]+j));
         }
         printf("\n");
     }
     printf("\n");
-}
 
-void makeMove(char (*m)[SIZE], int *zugCounter){
-    int i=0;
-    int j=0;
-
-    do{
-    printf("KREUZ/KREIS SETZEN, ZEILEN- UND SPALTENINDEX ANGEBEN: ");
-    scanf("%d %d", &i, &j);
-    }while(i>2 || i<0 || j>2 || j<0);
-    
-    if(*zugCounter%2 == 0){
-        m[i][j] = 'X';
-        (*zugCounter)++;
-    }
-    else{
-        m[i][j] = 'O';
-        (*zugCounter)++;
-    }
-    printf("\n");
 }
